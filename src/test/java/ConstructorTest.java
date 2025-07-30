@@ -1,41 +1,37 @@
 import io.github.bonigarcia.wdm.WebDriverManager;
+import io.qameta.allure.Step;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.interactions.Actions;
 import pageobjects.LoginPage;
 import pageobjects.MainPage;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConstructorTest {
-    /*Раздел «Конструктор»
-    Проверь, что работают переходы к разделам:
-    «Булки»,
-    «Соусы»,
-    «Начинки».
-    */
     private WebDriver driver;
-    Actions actions;
 
     @BeforeEach
+    @Step("Стартуем браузер")
     public void setUp() {
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver(); // Создание драйвера перед каждым тестом
-        actions = new Actions(driver);
         driver.get("https://stellarburgers.nomoreparties.site/");
     }
 
     @AfterEach
+    @Step("Выходим из браузера")
     public void tearDown() {
-        // TODO: add
+        if (driver != null) {
+            driver.quit();
+        }
     }
 
     @Test
     public void bunSectionTest() {
-        MainPage mainPage = new MainPage(driver, actions);
+        MainPage mainPage = new MainPage(driver);
         mainPage.waitFormIsLoad();
         mainPage.pressLogin();
         LoginPage loginPage = new LoginPage(driver);
@@ -51,7 +47,7 @@ public class ConstructorTest {
 
     @Test
     public void sauceSectionTest() {
-        MainPage mainPage = new MainPage(driver, actions);
+        MainPage mainPage = new MainPage(driver);
         mainPage.waitFormIsLoad();
         mainPage.pressLogin();
         LoginPage loginPage = new LoginPage(driver);
@@ -66,7 +62,7 @@ public class ConstructorTest {
 
     @Test
     public void fillingSectionTest() {
-        MainPage mainPage = new MainPage(driver, actions);
+        MainPage mainPage = new MainPage(driver);
         mainPage.waitFormIsLoad();
         mainPage.pressLogin();
         LoginPage loginPage = new LoginPage(driver);

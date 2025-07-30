@@ -1,10 +1,11 @@
 import io.github.bonigarcia.wdm.WebDriverManager;
+import io.qameta.allure.Step;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.interactions.Actions;
 import pageobjects.LoginPage;
 import pageobjects.MainPage;
 import pageobjects.RegisterPage;
@@ -13,19 +14,26 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RegistrationTest {
     private WebDriver driver;
-    Actions actions;
 
     @BeforeEach
+    @Step("Стартуем браузер")
     public void setUp() {
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver(); // Создание драйвера перед каждым тестом
-        actions = new Actions(driver);
         driver.get("https://stellarburgers.nomoreparties.site/");
+    }
+
+    @AfterEach
+    @Step("Выходим из браузера")
+    public void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
     }
 
     @Test
     public void registerTest() {
-        MainPage mainPage = new MainPage(driver, actions);
+        MainPage mainPage = new MainPage(driver);
         mainPage.pressLogin();
         LoginPage loginPage = new LoginPage(driver);
         loginPage.pressRegister();
@@ -41,7 +49,7 @@ public class RegistrationTest {
 
     @Test
     public void registerIncorrectPasswordTest() {
-        MainPage mainPage = new MainPage(driver, actions);
+        MainPage mainPage = new MainPage(driver);
         mainPage.pressLogin();
         LoginPage loginPage = new LoginPage(driver);
         loginPage.pressRegister();

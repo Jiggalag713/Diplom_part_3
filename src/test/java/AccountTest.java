@@ -1,10 +1,10 @@
 import io.github.bonigarcia.wdm.WebDriverManager;
+import io.qameta.allure.Step;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.interactions.Actions;
 import pageobjects.AccountPage;
 import pageobjects.LoginPage;
 import pageobjects.MainPage;
@@ -13,24 +13,26 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AccountTest {
     private WebDriver driver;
-    Actions actions;
 
     @BeforeEach
+    @Step("Стартуем браузер")
     public void setUp() {
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver(); // Создание драйвера перед каждым тестом
-        actions = new Actions(driver);
         driver.get("https://stellarburgers.nomoreparties.site/");
     }
 
     @AfterEach
+    @Step("Выходим из браузера")
     public void tearDown() {
-        // TODO: add
+        if (driver != null) {
+            driver.quit();
+        }
     }
 
     @Test
     public void accountTest() {
-        MainPage mainPage = new MainPage(driver, actions);
+        MainPage mainPage = new MainPage(driver);
         mainPage.pressLogin();
         LoginPage loginPage = new LoginPage(driver);
         loginPage.waitFormIsLoad();
@@ -46,7 +48,7 @@ public class AccountTest {
 
     @Test
     public void clickConstructorTest() {
-        MainPage mainPage = new MainPage(driver, actions);
+        MainPage mainPage = new MainPage(driver);
         mainPage.pressLogin();
         LoginPage loginPage = new LoginPage(driver);
         loginPage.waitFormIsLoad();
@@ -60,7 +62,7 @@ public class AccountTest {
 
     @Test
     public void clickLogoTest() {
-        MainPage mainPage = new MainPage(driver, actions);
+        MainPage mainPage = new MainPage(driver);
         mainPage.pressLogin();
         LoginPage loginPage = new LoginPage(driver);
         loginPage.waitFormIsLoad();
@@ -74,7 +76,7 @@ public class AccountTest {
 
     @Test
     public void logoutTest() {
-        MainPage mainPage = new MainPage(driver, actions);
+        MainPage mainPage = new MainPage(driver);
         mainPage.pressLogin();
         LoginPage loginPage = new LoginPage(driver);
         loginPage.waitFormIsLoad();
