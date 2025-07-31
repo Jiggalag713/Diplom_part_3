@@ -1,6 +1,5 @@
 import io.github.bonigarcia.wdm.WebDriverManager;
 import io.qameta.allure.Step;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,57 +7,54 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import pageobjects.LoginPage;
 import pageobjects.MainPage;
-import pageobjects.RegisterPage;
+import util.ApiHelper;
+import util.Constants;
+import util.Steps;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RegistrationTest {
-    private WebDriver driver;
+    private static final String BASE_URI = Constants.BASE_URI;
+    private static final String EMAIL = Constants.EMAIL;
+    private static final String PASSWORD = Constants.PASSWORD;
+    private static final String NAME = Constants.NAME;
+    private static final ApiHelper API = new ApiHelper(BASE_URI);
+    private static WebDriver webdriver;
+    private static Steps steps;
+    private static LoginPage loginPage;
 
     @BeforeEach
-    @Step("Стартуем браузер")
+    @Step("Стартуем браузер, настраиваем предусловия тестов")
     public void setUp() {
         WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver(); // Создание драйвера перед каждым тестом
-        driver.get("https://stellarburgers.nomoreparties.site/");
+        webdriver = new ChromeDriver();
+        webdriver.get(BASE_URI);
+        steps = new Steps(API, webdriver);
+        steps.setDriver(webdriver);
+        loginPage = new LoginPage(webdriver);
     }
 
     @AfterEach
-    @Step("Выходим из браузера")
+    @Step("Выходим из браузера, удаляем пользователя")
     public void tearDown() {
-        if (driver != null) {
-            driver.quit();
+        if (webdriver != null) {
+            webdriver.quit();
         }
     }
 
     @Test
     public void registerTest() {
-        MainPage mainPage = new MainPage(driver);
+        steps.createUser(EMAIL, PASSWORD, NAME);
+        MainPage mainPage = new MainPage(webdriver);
         mainPage.pressLogin();
-        LoginPage loginPage = new LoginPage(driver);
-        loginPage.pressRegister();
-        RegisterPage registerPage = new RegisterPage(driver);
-        registerPage.inputName("Петя");
-        String randomEmail = "regdoll" + RandomStringUtils.randomAlphanumeric(12) + "@mail.ru";
-        registerPage.inputEmail(randomEmail);
-        registerPage.inputPassword("test123");
-        registerPage.pressRegisterButton();
         loginPage.waitFormIsLoad();
-        assertEquals("https://stellarburgers.nomoreparties.site/login", driver.getCurrentUrl());
+        assertEquals(BASE_URI + "/login", webdriver.getCurrentUrl());
+        steps.deleteUser(EMAIL, PASSWORD, NAME);
     }
 
     @Test
     public void registerIncorrectPasswordTest() {
-        MainPage mainPage = new MainPage(driver);
-        mainPage.pressLogin();
-        LoginPage loginPage = new LoginPage(driver);
-        loginPage.pressRegister();
-        RegisterPage registerPage = new RegisterPage(driver);
-        registerPage.inputName("Петя");
-        String randomEmail = "regdoll" + RandomStringUtils.randomAlphanumeric(12) + "@mail.ru";
-        registerPage.inputEmail(randomEmail);
-        registerPage.inputPassword("123");
-        registerPage.pressRegisterButton();
-        assertEquals(true, registerPage.passwordIsIncorrect());
+        steps.registerUser(EMAIL, "123", NAME);
+        assertEquals(true, steps.passwordIsIncorrect());
     }
 }

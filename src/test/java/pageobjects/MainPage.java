@@ -8,10 +8,10 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 
 public class MainPage {
-    private final WebDriver driver;
+    private final WebDriver WEBDRIVER;
 
     public MainPage(WebDriver driver){
-        this.driver = driver;
+        this.WEBDRIVER = driver;
     }
 
     // Кнопка "Войти в аккаунт"
@@ -46,52 +46,52 @@ public class MainPage {
 
     // Нажать кнопку "Войти в аккаунт"
     public void pressLogin() {
-        driver.findElement(LOGIN_BUTTON).click();
+        WEBDRIVER.findElement(LOGIN_BUTTON).click();
     }
 
     // Нажать кнопку "Личный кабинет"
     public void pressPersonalAccount() {
-        driver.findElement(PERSONAL_ACCOUNT).click();
+        WEBDRIVER.findElement(PERSONAL_ACCOUNT).click();
     }
 
     // Нажать ссылку "Конструктор"
     public void pressConstructorLink() {
-        driver.findElement(CONSTRUCTOR_LINK).click();
+        WEBDRIVER.findElement(CONSTRUCTOR_LINK).click();
     }
 
     // Видна ли кнопка "Оформить заказ"
     public Boolean isCreateOrderButtonVisible() {
-        return driver.findElement(CREATE_ORDER).isDisplayed();
+        return WEBDRIVER.findElement(CREATE_ORDER).isDisplayed();
     }
 
     // Кликнуть по лого
     public void pressLogo() {
-        driver.findElement(LOGO).click();
+        WEBDRIVER.findElement(LOGO).click();
     }
 
     // Кликнуть на секцию "Булки"
     public void pressBuns() {
-        driver.findElement(BUNS_BUTTON).click();
+        WEBDRIVER.findElement(BUNS_BUTTON).click();
     }
 
     // Кликнуть на секцию "Соусы"
     public void pressSauces() {
-        driver.findElement(SAUCES_BUTTON).click();
+        WEBDRIVER.findElement(SAUCES_BUTTON).click();
     }
 
     // Кликнуть на секцию "Начинки"
     public void pressFillings() {
-        driver.findElement(FILLINGS_BUTTON).click();
+        WEBDRIVER.findElement(FILLINGS_BUTTON).click();
     }
 
     public boolean isSectionSelected(String section) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
+        WebDriverWait wait = new WebDriverWait(WEBDRIVER, Duration.ofSeconds(3));
         return wait.until(ExpectedConditions.textToBePresentInElementLocated(SELECTED_CONSTRUCTOR_SECTION, section));
     }
 
     // Ждем загрузки формы
     public void waitFormIsLoad() {
-        new WebDriverWait(driver, Duration.ofSeconds(5))
+        new WebDriverWait(WEBDRIVER, Duration.ofSeconds(5))
                 .until(ExpectedConditions.visibilityOfElementLocated(BURGER_CONSTRUCTOR));
     }
 }

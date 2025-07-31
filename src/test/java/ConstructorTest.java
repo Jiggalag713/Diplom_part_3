@@ -7,39 +7,50 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import pageobjects.LoginPage;
 import pageobjects.MainPage;
+import util.ApiHelper;
+import util.Constants;
+import util.Steps;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConstructorTest {
-    private WebDriver driver;
+    private static final String BASE_URI = Constants.BASE_URI;
+    private static final String EMAIL = Constants.EMAIL;
+    private static final String PASSWORD = Constants.PASSWORD;
+    private static final String NAME = Constants.NAME;
+    private static final ApiHelper API = new ApiHelper(BASE_URI);
+    private WebDriver webdriver;
+    private static Steps steps;
+    private static MainPage mainPage;
 
     @BeforeEach
-    @Step("Стартуем браузер")
+    @Step("Стартуем браузер, настраиваем предусловия тестов")
     public void setUp() {
         WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver(); // Создание драйвера перед каждым тестом
-        driver.get("https://stellarburgers.nomoreparties.site/");
+        webdriver = new ChromeDriver();
+        webdriver.get(BASE_URI);
+        steps = new Steps(API, webdriver);
+        steps.setDriver(webdriver);
+        mainPage = new MainPage(webdriver);
+        LoginPage loginPage = new LoginPage(webdriver);
+        steps.createUser(EMAIL, PASSWORD, NAME);
+        mainPage.pressLogin();
+        loginPage.waitFormIsLoad();
+        steps.loginUser(EMAIL, PASSWORD);
+        mainPage.waitFormIsLoad();
     }
 
     @AfterEach
-    @Step("Выходим из браузера")
+    @Step("Выходим из браузера, удаляем пользователя")
     public void tearDown() {
-        if (driver != null) {
-            driver.quit();
+        steps.deleteUser(EMAIL, PASSWORD, NAME);
+        if (webdriver != null) {
+            webdriver.quit();
         }
     }
 
     @Test
     public void bunSectionTest() {
-        MainPage mainPage = new MainPage(driver);
-        mainPage.waitFormIsLoad();
-        mainPage.pressLogin();
-        LoginPage loginPage = new LoginPage(driver);
-        loginPage.waitFormIsLoad();
-        loginPage.inputEmail("regdoll@mail.ru");
-        loginPage.inputPassword("test123");
-        loginPage.pressLoginButton();
-        mainPage.waitFormIsLoad();
         mainPage.pressSauces();
         mainPage.pressBuns();
         assertTrue(mainPage.isSectionSelected("Булки"));
@@ -47,30 +58,12 @@ public class ConstructorTest {
 
     @Test
     public void sauceSectionTest() {
-        MainPage mainPage = new MainPage(driver);
-        mainPage.waitFormIsLoad();
-        mainPage.pressLogin();
-        LoginPage loginPage = new LoginPage(driver);
-        loginPage.waitFormIsLoad();
-        loginPage.inputEmail("regdoll@mail.ru");
-        loginPage.inputPassword("test123");
-        loginPage.pressLoginButton();
-        mainPage.waitFormIsLoad();
         mainPage.pressSauces();
         assertTrue(mainPage.isSectionSelected("Соусы"));
     }
 
     @Test
     public void fillingSectionTest() {
-        MainPage mainPage = new MainPage(driver);
-        mainPage.waitFormIsLoad();
-        mainPage.pressLogin();
-        LoginPage loginPage = new LoginPage(driver);
-        loginPage.waitFormIsLoad();
-        loginPage.inputEmail("regdoll@mail.ru");
-        loginPage.inputPassword("test123");
-        loginPage.pressLoginButton();
-        mainPage.waitFormIsLoad();
         mainPage.pressFillings();
         assertTrue(mainPage.isSectionSelected("Начинки"));
     }

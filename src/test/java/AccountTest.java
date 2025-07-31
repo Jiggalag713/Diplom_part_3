@@ -8,87 +8,76 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import pageobjects.AccountPage;
 import pageobjects.LoginPage;
 import pageobjects.MainPage;
+import util.ApiHelper;
+import util.Constants;
+import util.Steps;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AccountTest {
-    private WebDriver driver;
+    private static final String BASE_URI = Constants.BASE_URI;
+    private static final String EMAIL = Constants.EMAIL;
+    private static final String PASSWORD = Constants.PASSWORD;
+    private static final String NAME = Constants.NAME;
+    private static final ApiHelper API = new ApiHelper(BASE_URI);
+    private WebDriver webdriver;
+    private static Steps steps;
+    private static MainPage mainPage;
+    private static LoginPage loginPage;
+    private static AccountPage accountPage;
 
     @BeforeEach
-    @Step("Стартуем браузер")
+    @Step("Стартуем браузер, настраиваем предусловия тестов")
     public void setUp() {
         WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver(); // Создание драйвера перед каждым тестом
-        driver.get("https://stellarburgers.nomoreparties.site/");
+        webdriver = new ChromeDriver(); // Создание драйвера перед каждым тестом
+        webdriver.get(BASE_URI);
+        steps = new Steps(API, webdriver);
+        steps.setDriver(webdriver);
+        mainPage = new MainPage(webdriver);
+        loginPage = new LoginPage(webdriver);
+        accountPage = new AccountPage(webdriver);
+        steps.createUser(EMAIL, PASSWORD, NAME);
+        mainPage.pressLogin();
+        loginPage.waitFormIsLoad();
+        steps.loginUser(EMAIL, PASSWORD);
+        mainPage.waitFormIsLoad();
     }
 
     @AfterEach
-    @Step("Выходим из браузера")
+    @Step("Выходим из браузера, удаляем пользователя")
     public void tearDown() {
-        if (driver != null) {
-            driver.quit();
+        steps.deleteUser(EMAIL, PASSWORD, NAME);
+        if (webdriver != null) {
+            webdriver.quit();
         }
     }
 
     @Test
     public void accountTest() {
-        MainPage mainPage = new MainPage(driver);
-        mainPage.pressLogin();
-        LoginPage loginPage = new LoginPage(driver);
-        loginPage.waitFormIsLoad();
-        loginPage.inputEmail("regdoll@mail.ru");
-        loginPage.inputPassword("test123");
-        loginPage.pressLoginButton();
-        mainPage.waitFormIsLoad();
         mainPage.pressPersonalAccount();
-        AccountPage accountPage = new AccountPage(driver);
         accountPage.waitFormIsLoad();
-        assertEquals("https://stellarburgers.nomoreparties.site/account/profile", driver.getCurrentUrl());
+        assertEquals(BASE_URI + "/account/profile", webdriver.getCurrentUrl());
     }
 
     @Test
     public void clickConstructorTest() {
-        MainPage mainPage = new MainPage(driver);
-        mainPage.pressLogin();
-        LoginPage loginPage = new LoginPage(driver);
-        loginPage.waitFormIsLoad();
-        loginPage.inputEmail("regdoll@mail.ru");
-        loginPage.inputPassword("test123");
-        loginPage.pressLoginButton();
-        mainPage.waitFormIsLoad();
         mainPage.pressConstructorLink();
-        assertEquals("https://stellarburgers.nomoreparties.site/", driver.getCurrentUrl());
+        assertEquals(BASE_URI + "/", webdriver.getCurrentUrl());
     }
 
     @Test
     public void clickLogoTest() {
-        MainPage mainPage = new MainPage(driver);
-        mainPage.pressLogin();
-        LoginPage loginPage = new LoginPage(driver);
-        loginPage.waitFormIsLoad();
-        loginPage.inputEmail("regdoll@mail.ru");
-        loginPage.inputPassword("test123");
-        loginPage.pressLoginButton();
-        mainPage.waitFormIsLoad();
         mainPage.pressLogo();
-        assertEquals("https://stellarburgers.nomoreparties.site/", driver.getCurrentUrl());
+        assertEquals(BASE_URI + "/", webdriver.getCurrentUrl());
     }
 
     @Test
     public void logoutTest() {
-        MainPage mainPage = new MainPage(driver);
-        mainPage.pressLogin();
-        LoginPage loginPage = new LoginPage(driver);
-        loginPage.waitFormIsLoad();
-        loginPage.inputEmail("regdoll@mail.ru");
-        loginPage.inputPassword("test123");
-        loginPage.pressLoginButton();
-        mainPage.waitFormIsLoad();
         mainPage.pressPersonalAccount();
-        AccountPage accountPage = new AccountPage(driver);
         accountPage.waitFormIsLoad();
         accountPage.pressLogout();
         loginPage.waitFormIsLoad();
-        assertEquals("https://stellarburgers.nomoreparties.site/login", driver.getCurrentUrl());
+        assertEquals(BASE_URI + "/login", webdriver.getCurrentUrl());
     }
 }
