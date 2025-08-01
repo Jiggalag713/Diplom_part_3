@@ -1,15 +1,11 @@
-import io.github.bonigarcia.wdm.WebDriverManager;
 import io.qameta.allure.Step;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import pageobjects.LoginPage;
 import pageobjects.MainPage;
-import util.ApiHelper;
-import util.Constants;
-import util.Steps;
+import util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -26,8 +22,7 @@ public class RegistrationTest {
     @BeforeEach
     @Step("Стартуем браузер, настраиваем предусловия тестов")
     public void setUp() {
-        WebDriverManager.chromedriver().setup();
-        webdriver = new ChromeDriver();
+        webdriver = WebDriverFactory.getWebDriver(Browser.CHROME);
         webdriver.get(BASE_URI);
         steps = new Steps(API, webdriver);
         steps.setDriver(webdriver);

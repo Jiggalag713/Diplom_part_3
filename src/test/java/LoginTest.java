@@ -1,22 +1,17 @@
-import io.github.bonigarcia.wdm.WebDriverManager;
 import io.qameta.allure.Step;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import pageobjects.LoginPage;
 import pageobjects.MainPage;
 import pageobjects.RegisterPage;
 import pageobjects.RestorePasswordPage;
-import util.ApiHelper;
-import util.Constants;
-import util.Steps;
+import util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LoginTest {
-    // TODO: параметризовать - стартовый урл, элемент, по которому кликать
     private static final String BASE_URI = Constants.BASE_URI;
     private static final String EMAIL = Constants.EMAIL;
     private static final String PASSWORD = Constants.PASSWORD;
@@ -32,8 +27,7 @@ public class LoginTest {
     @BeforeEach
     @Step("Стартуем браузер, настраиваем предусловия тестов")
     public void setUp() {
-        WebDriverManager.chromedriver().setup();
-        webdriver = new ChromeDriver(); // Создание драйвера перед каждым тестом
+        webdriver = WebDriverFactory.getWebDriver(Browser.CHROME);
         webdriver.get(BASE_URI);
         steps = new Steps(API, webdriver);
         steps.setDriver(webdriver);
